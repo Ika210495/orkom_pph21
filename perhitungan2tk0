@@ -1,0 +1,72 @@
+maxjabatan2:
+	fld dword[maxjabatan]
+	fld dword[nilaisetahun]
+	fmul
+	fstp qword[nilmaxjabatan1]
+	call niljab31
+ret
+niljab31:
+	fld qword[hsl_bruto1]
+	fld qword[pembagijabatan]
+	fmul
+	fstp qword[niljab1]
+	call hasiljbt3
+ret
+hasiljbt3:
+		fld qword[nilmaxjabatan1]
+		fld qword[niljab1]
+		fcomip
+		ja maxjbtn8	
+	 
+		nilaijbtn3:
+			push dword[niljab1+4]
+			push dword[niljab1]
+			push teks19 ;<600000000 jabatan
+			call printf
+			add esp, 12
+			
+			fld qword[hsl_bruto1]
+			fld qword[niljab1]
+			fsub
+			fstp qword[nilai21]
+			
+			fld qword[nilai21]
+			fld qword[niljhtsthn]
+			fsub
+			fstp qword[jum51]
+			
+			push dword[jum51+4]
+			push dword[jum51]
+			push teks24
+			call printf
+			add esp, 12
+			call persenlimabelas1
+			jmp kondisi_selesai
+			
+		maxjbtn8:
+			push dword[nilmaxjabatan1+4]
+			push dword[nilmaxjabatan1]
+			push teks19
+			call printf
+			add esp, 12
+			
+			fld qword[hsl_bruto1]
+			fld qword[niljhtsthn]
+			fsub
+			fstp qword[tampung41]
+			
+			fld qword[tampung41]
+			fld qword[nilmaxjabatan1]
+			fsub
+			fstp qword[jum5]
+			push dword[jum5+4]
+			push dword[jum5]
+			push teks24
+			call printf
+			add esp, 12
+			call persenlimabelas1
+			jmp kondisi_selesai
+	;call ptkp
+ret
+
+
