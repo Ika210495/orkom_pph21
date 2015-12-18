@@ -1,0 +1,286 @@
+extern printf
+extern scanf
+%include 'printString.asm'
+%include 'jumlahgppt.asm'
+%include 'text.asm'
+%include 'perhitungan.asm'
+%include 'hitpkp.asm'
+%include 'hitpkp2.asm'
+%include 'hitpkp3.asm'
+%include 'hitpkp4.asm'
+%include 'perhitungan2tk0.asm'
+%include 'perhitungank1.asm'
+%include 'perhitungkank12.asm'
+
+;%include 'perhitungan2.asm'
+;%include 'jumlahgppt2.asm'
+
+;%include 'persen.asm'
+section .data
+   init	    	    	db  '------------------------------------------------------------------------------------', 0xa
+    					db  '|                                                                                  |',0xa
+    					db  '|                          Perhitungan Pajak PPh 21                                |',0xa
+    					db  '|                                                                                  |',0xa
+    					db  '------------------------------------------------------------------------------------',0xa
+	
+   npwp	   	        	db	'Apakah Anda Memiliki NPWP ?', 10
+    					db 	"1. Ya", 10
+    					db 	"2. Tidak", 10, 0
+   kondisi1_bil2        db	' Masukkan Jenis PTKP Anda ?', 10
+					    db  "1. TK0", 10
+					    db  "2. K0", 10, 0
+  
+   kondisi1_bil 	    db	' Masukkan Jenis PTKP Anda ?', 10
+					    db  "1. TK0", 10
+					    db  "2. K0", 10, 0
+					
+    ;Nilai ketenagakerjaan
+    teks1				db	'Masukkan JKK ?',10,0
+    teks2		 	    db 	'Masukkan JKM ?',10,0    
+    teks3				db	'Masukkan JHT ?',10,0
+    
+    ;Nilai GPPT
+    teks4			  	db 	'Masukkan Gaji Pokok?',10,0
+    teks5				db	'Masukkan Tunjangan Keluarga ?',10,0
+    teks6				db	'Masukkan Tunjangan Jabatan ?',10,0
+    
+    ;Nilai Tunjangan Tidak Tetap
+    teks7			  	db 	'Masukkan Tunjangan Kehadiran?',10,0
+    teks8				db	'Masukkan Tunjangan Lembur ?',10,0
+    teks9				db	'Masukkan Tunjangan Makan ?',10,0    
+    
+    ;Hasil
+    teks12				db	'Hasil GPPT : %d',10,0 
+    teks13				db	'Hasil BPJS : %.2f ',10,0
+    teks14				db	'Hasil JKM  : %.2f ',10,0
+    teks15				db	'Hasil JKK  : %.2f ',10,0
+    teks16				db	'Hasil Bruto  : %.2f ',10,0
+    teks17				db	'Hasil Bruto Setahun  : %.2f ',10,0
+    teks18				db	'pembagi  : %.2f ',10,0
+    teks19				db	'Nilai Jabatan  : %.2f ',10,0
+    teks22				db	'Hasil JHT  : %.2f ',10,0
+    teks23				db	'Hasil JHT Setahun  : %.2f ',10,0
+    teks24				db	'Hasil Netto  : %.2f ',10,0
+    teks25				db	'Hasil pkp : %.2f',10,0
+    teks26				db	'Kurang Beruntung',10,0
+    
+    
+    format_in   		db  "%d",0
+    format1_in   		db  "%f",0
+    nilai				dd  100.00
+    nilaisetahun		dd  12
+    nilaijabatan		dd  5.00
+    maxjabatan			dd	500000.00
+    niltk0              dd  36000000.00
+    ;niltk01             dq  360.00
+    niltk9              dd  50000000.00
+    nilK1               dd  39000000.00
+    tdkkenapajak        dq  0.00
+    
+    testa				    db 	'test %.2f',10,0
+    tl2				    db 	'pkp %.2f',10,0
+	tl1				    db	'hasil p1: %.2f',10,0
+	tl3				    db	'hasil pph21: %.2f',10,0
+	masuk				db 	'masuk1',10,0
+	masuk1				db 	'masuk2',10,0
+	masuk2				db 	'masuk3',10,0
+    banding50           dq  50000000.00
+    banding25           dq  250000000.00
+    persen15             dq  0.15
+    persen25             dq  0.25
+    persen30             dq  0.30
+    persen18             dq  0.18
+    persen6              dq  0.6
+    persen36             dq  0.36
+    ;test1               dq  100000.0
+    
+   
+section .bss
+	;nilai gppt
+	gapok1   				resd    4
+    tunjangan_keluarga    	resd    4
+    tunjangan_jabatan    	resd    4
+    
+    ;tampungan nilai gppt
+    hasil1 					resd 	4
+    
+    ;hasil gppt
+    total_GPPT 				resd	4   
+    
+    ;nilai tunjangan tidak tetap
+    tunjangan_kehadiran    	resd    4
+    tunjangan_lembur     	resd    4
+    tunjangan_makan     	resd    4
+    
+    ;nilai jkk
+    jkk1    				resq    4
+    tot_jkk				    resd	4
+    tampung2				resd	4
+    
+    ;nilai jkm
+    tot_jkm				    resd	4
+    jkm1    				resq    4
+	tampung1				resd	4
+	
+	;Bruto
+	jum1					resd    4
+    jum2					resd    4
+    jum3					resd    4
+    jum4					resd    4
+    hsl_bruto 				resd	4
+    
+    ;Bruto Setahun
+    hsl_bruto1 				resd	4
+    
+    ;taxdeduction
+    pembagijabatan			resd    4
+    
+    ;MaxJabatanSetahun
+    nilmaxjabatan			resd	20
+    nilmaxjabatan1			resd	20
+    nilmaxjabatan2			resd	20
+    nilmaxjabatan3			resd	20
+    
+    ;hitung jht
+    tampung3				resd	4
+    tot_jht				    resd	4
+    
+    ;hitung jht setahun
+    niljhtsthn				resd	20
+    
+    ;nilaijab 
+    niljab					resd	20
+    niljab1					resd	20
+    niljab21				resd	20
+    niljab3 				resd	20
+    
+    h15         			resd    4
+    h25         			resd    4
+    h30         			resd    4
+    h36         			resd    4
+    h6              		resd    4
+    h18         			resd    4
+  
+    jht1    				resq    4
+    ;nilai1					resd	4
+    
+    nilai2					resd	4
+    nilai21					resd	4
+    nilai22					resd	4
+    nilai23					resd	4
+    tampung4				resd	4
+    tampung41				resd	4
+    tampung42				resd	4
+    tampung43				resd	4
+    tampung5				resd	4
+    ;tampung6				resd	4
+    jum5     				resd    4
+    jum51     				resd    4
+    jum52     				resd    4
+    jum53     				resd    4
+    pkp                     resq    4
+    pkp1                    resd    4
+     
+    p12						resd	4
+    p5						resd	4
+    tam						resd	4
+    p1						resd	4
+    p2						resd	4
+    p3						resd	4
+    p4						resd	4
+   	t						resd	4
+    hasil					resd	4
+    hasil12					resd	4
+    hasil2					resd	4
+    hasil3					resd	4
+    psetahun				resq	4
+    psetahun1				resq	4
+    psetahun2				resq	4
+    psetahun3				resq	4
+	t1						resd	4
+	t2						resd	4
+    
+section .text
+	global main
+	
+main:
+	push init
+    call printf
+    add esp, 4
+    
+    push npwp
+    push format_in
+    call scanf
+    add esp, 8
+    
+    cmp dword[npwp], 1
+    je kondisi1
+    cmp dword[npwp], 2
+    je kondisi2
+ 
+ kondisi1:
+
+    push kondisi1_bil
+    call printf
+    add esp, 4
+    
+    push kondisi1_bil
+    push format_in
+    call scanf
+    add esp, 8
+    
+    cmp dword[kondisi1_bil ], 1
+    je tk0
+    cmp dword[kondisi1_bil], 2
+    je k0
+    
+    jmp kondisi_selesai
+    
+tk0:      
+	call perhitugan 
+	call jumlahgppt	
+	call maxjabatan1
+	jmp kondisi_selesai 
+ 
+k0:    
+	call perhitugan
+	call jumlahgppt
+	call maxjabatan3
+    jmp kondisi_selesai  
+    
+kondisi2:
+    push kondisi1_bil2
+    call printf
+    add esp, 4
+    
+    push kondisi1_bil2
+    push format_in
+    call scanf
+    add esp, 8
+    
+    cmp dword[kondisi1_bil2 ], 1
+    je tk01
+    cmp dword[kondisi1_bil2], 2
+    je k01
+    jmp kondisi_selesai 
+ 
+tk01:      
+	call perhitugan 
+	call jumlahgppt
+	call maxjabatan2
+	jmp kondisi_selesai 
+ 
+k01:    
+	call perhitugan 
+	call jumlahgppt	
+	call maxjabatan4
+    jmp kondisi_selesai
+ 
+kondisi_selesai:
+    jmp exit
+
+
+exit:
+	mov eax,1
+	mov ebx,0
+	int 0x80
